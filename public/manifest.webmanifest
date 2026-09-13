@@ -1,0 +1,35 @@
+{
+  "name": "GymShift — Смены тренеров",
+  "short_name": "GymShift",
+  "description": "Онлайн-календарь смен тренеров спортзала с изменениями в реальном времени",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0d9488",
+  "background_color": "#f6f8f6",
+  "lang": "ru",
+  "dir": "auto",
+  "categories": ["productivity", "fitness"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

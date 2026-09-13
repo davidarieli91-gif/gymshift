@@ -1,0 +1,96 @@
+generator client {
+  provider        = "prisma-client-js"
+  // Required for Turso (libSQL) in production: src/lib/db.ts passes a
+  // driver adapter to PrismaClient when DATABASE_URL is libsql://...
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Trainer of the gym. Registered via shared link with name + PIN (no email).
+// The FIRST account without an existing admin becomes "admin" (senior admin).
+model Trainer {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  phone     String? // digits only, used for WhatsApp deep links (optional)
+  pinHash   String // sha256("gymshift:" + pin)
+  role      String   @default("trainer") // "admin" | "trainer"
+  color     String
+  createdAt DateTime @default(now())
+
+  shifts        Shift[]
+  templateSlots TemplateSlot[]
+  personalEvents PersonalEvent[]
+}
+
+// One work shift: a trainer on duty for a time range on a date.
+// No class types — calendar is for shifts only.
+model Shift {
+  id          String   @id @default(cuid())
+  date        String // local date key "yyyy-mm-dd"
+  trainerId   String
+  startMin    Int // minutes from midnight, e.g. 450 = 07:30
+  endMin      Int
+  note        String?
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  trainer Trainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+
+  @@index([date])
+}
+
+// Standard (recurring weekly) shifts template. weekday: 0=Sunday .. 6=Saturday.
+model TemplateSlot {
+  id        String @id @default(cuid())
+  weekday   Int
+  trainerId String
+  startMin  Int
+  endMin    Int
+
+  trainer Trainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+}
+
+// PRIVATE per-trainer calendar entries ("личный календарь"): appointments,
+// vacations, reminders. Strictly owner-only — the API never returns, accepts
+// or logs anyone else's events, and they never appear in the shared ChangeLog.
+// Not restricted to DAY_WINDOWS: a personal day can span any time (0..1440).
+model PersonalEvent {
+  id        String   @id @default(cuid())
+  trainerId String
+  date      String // local date key "yyyy-mm-dd" (first occurrence for repeats)
+  title     String
+  startMin  Int // minutes from midnight
+  endMin    Int
+  allDay    Boolean  @default(false)
+  note      String?
+  /// Google-like event color (hex) — null = theme primary. Owner-private.
+  color     String?
+  /// "none" | "daily" | "weekly" | "monthly" — simple recurrence (like GC)
+  repeat    String   @default("none")
+  /// comma-separated "yyyy-mm-dd" of deleted/moved-away single occurrences
+  exceptions String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trainer Trainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+
+  @@index([trainerId, date])
+}
+
+// Feed of "recent changes" shown to everyone; also the source for WhatsApp sharing.
+model ChangeLog {
+  id        String   @id @default(cuid())
+  actorId   String
+  actorName String
+  action    String // shift_add | shift_edit | shift_delete | template_save | template_apply | trainer_join | trainer_remove
+  payload   String // JSON string, see SPEC.md
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
