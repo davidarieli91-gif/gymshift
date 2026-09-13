@@ -252,12 +252,6 @@ export function AuthScreen({ lang, t, onAuthed }: AuthScreenProps) {
             </form>
           </Tabs>
         </div>
-
-        {/* demo credentials */}
-        <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          <KeyRound className="size-3.5" aria-hidden="true" />
-          <span>{a.demoHint}</span>
-        </div>
       </motion.div>
     </div>
   );

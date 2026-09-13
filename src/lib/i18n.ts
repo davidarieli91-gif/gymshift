@@ -128,7 +128,6 @@ export interface Dict {
     phonePh: string;
     loginBtn: string;
     registerBtn: string;
-    demoHint: string;
     registerNote: string;
     welcome: (name: string) => string;
     errName: string;
@@ -305,7 +304,6 @@ export const dict: Record<Lang, Dict> = {
       phonePh: "+972 50-1234567",
       loginBtn: "Войти",
       registerBtn: "Зарегистрироваться",
-      demoHint: "Демо-доступ: PIN 1234",
       registerNote: "Первый зарегистрированный аккаунт станет старшим админом",
       welcome: (name) => `Добро пожаловать, ${name}!`,
       errName: "Введите имя (минимум 2 символа)",
@@ -503,7 +501,6 @@ export const dict: Record<Lang, Dict> = {
       phonePh: "050-1234567",
       loginBtn: "כניסה",
       registerBtn: "הרשמה",
-      demoHint: "גישת דמו: קוד PIN 1234",
       registerNote: "החשבון הראשון שיירשם יהפוך למנהל הראשי",
       welcome: (name) => `ברוך הבא, ${name}!`,
       errName: "הזינו שם (לפחות 2 תווים)",
