@@ -17,6 +17,7 @@ export async function GET() {
     hasToken: token.length > 0,
     tokenLen: token.length,
     hasAuthSecret: Boolean(process.env.AUTH_SECRET),
+    nextPublicRealtime: process.env.NEXT_PUBLIC_REALTIME ?? "(unset)",
   };
 
   try {
